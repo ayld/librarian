@@ -24,11 +24,11 @@ public class GithubAuthCallbackController {
         return new OAuthResponse(ResponseCode.OK);
     }
 
-    @RequestMapping(value="/authorize", method = RequestMethod.GET , produces = "application/json", params = "client_id")
-    public AuthorizationResponse authorize(@RequestParam String client_id) {
-        if (Strings.isNullOrEmpty(client_id)) {
-            return new AuthorizationResponse(ResponseCode.FAILED, "missing request param client_id");
+    @RequestMapping(value="/authorize", method = RequestMethod.GET , produces = "application/json", params = "code")
+    public AuthorizationResponse authorize(@RequestParam String code) {
+        if (Strings.isNullOrEmpty(code)) {
+            return new AuthorizationResponse(ResponseCode.FAILED, "missing request param code");
         }
-        return new AuthorizationResponse(ResponseCode.OK, client_id);
+        return new AuthorizationResponse(ResponseCode.OK, code);
     }
 }
