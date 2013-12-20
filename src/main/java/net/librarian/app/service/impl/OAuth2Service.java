@@ -2,7 +2,10 @@ package net.librarian.app.service.impl;
 
 import net.librarian.app.github.Scopes;
 import net.librarian.app.service.AuthService;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.social.github.api.GitHub;
 import org.springframework.social.github.connect.GitHubConnectionFactory;
+import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.social.oauth2.GrantType;
 import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.social.oauth2.OAuth2Parameters;
@@ -15,14 +18,10 @@ import org.springframework.social.oauth2.OAuth2Parameters;
  */
 public class OAuth2Service implements AuthService{
 
-    // hardcoded because why not ?
-    // no seriously, this doesnt change ...
-    private static final String APP_ID = "53a67a09360185f04549";
-    private static final String APP_SECRET = "0b01f6fe72cde13c9bcb741c20c988eafe9b7f9c";
+    private GitHubConnectionFactory connectionFactory;
 
     @Override
     public String getGitHubAuthUrl(Scopes... scopes) {
-        final GitHubConnectionFactory connectionFactory = new GitHubConnectionFactory(APP_ID, APP_SECRET);
 
         final OAuth2Parameters params = new OAuth2Parameters();
         params.setScope(Scopes.asString(scopes));
@@ -30,5 +29,16 @@ public class OAuth2Service implements AuthService{
         final OAuth2Operations operations = connectionFactory.getOAuthOperations();
 
         return operations.buildAuthorizeUrl(GrantType.IMPLICIT_GRANT, params);
+    }
+
+    @Override
+    public String getAuthenticatedUserName(String authToken) {
+        final GitHub gitHub = connectionFactory.createConnection(new AccessGrant(authToken)).getApi();
+        return gitHub.userOperations().getProfileId();
+    }
+
+    @Required
+    public void setConnectionFactory(GitHubConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
     }
 }

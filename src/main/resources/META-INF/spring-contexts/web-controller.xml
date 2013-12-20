@@ -8,4 +8,8 @@
         <property name="authService" ref="authService"/>
     </bean>
 
+    <bean id="reposBean" class="net.librarian.app.web.bean.ReposWebBean" scope="view">
+        <property name="repoService" ref="repoService"/>
+    </bean>
+
 </beans>
